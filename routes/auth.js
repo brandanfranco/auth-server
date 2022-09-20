@@ -7,6 +7,7 @@ const {
   loginUser,
   renewJsonWebToken,
 } = require("../controllers/auth.controllers");
+const { validationJWT } = require("../middlewares/validation-jwt");
 
 const router = Router();
 
@@ -34,6 +35,6 @@ router.post(
 );
 
 // validation renew
-router.get("/renew", renewJsonWebToken);
+router.get("/renew", validationJWT, renewJsonWebToken);
 
 module.exports = router;
