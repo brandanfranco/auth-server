@@ -41,6 +41,7 @@ const createNewUser = async (req, res = response) => {
       ok: true,
       uid: dbUser._id,
       name,
+      email,
       message: "Successfully created",
       token,
     });
@@ -84,12 +85,13 @@ const loginUser = async (req, res = response) => {
 
     //generate jsonwebtoken
 
-    const token = await generateJWT(dbUser.id, dbUser.name);
+    const token = await generateJWT(dbUser.id, dbUser.name, dbUser.email);
 
     return res.json({
       ok: true,
       uid: dbUser._id,
       name: dbUser.name,
+      email: dbUser.email,
       token,
     });
   } catch (error) {
@@ -102,13 +104,17 @@ const loginUser = async (req, res = response) => {
 };
 
 const renewJsonWebToken = async (req, res = response) => {
-  const { uid, name } = req;
+  const { uid } = req;
 
-  const token = await generateJWT(uid, name);
+  const dbUser = await User.findById(uid);
+
+  const token = await generateJWT(uid, dbUser.name);
   res.json({
     ok: true,
     uid,
-    name,
+    name: dbUser.name,
+    email: dbUser.email,
+    token,
   });
 };
 
